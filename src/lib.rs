@@ -1,3 +1,20 @@
+//! # What3Words Rust Client
+//!
+//! ## Description
+//!
+//! This is a Rust client for the What3Words API, allowing you to convert coordinates to three-word addresses and vice versa.
+//! This client is based on the provided [API documention](https://developer.what3words.com/public-api/docs) on the What3Words website.
+//!
+//! ## Features
+//!
+//! The following endpoints have been implemented:
+//! - Convert coordinates to 3words addresses;
+//! - Convert 3words addresses to coordinates;
+//! - Autosuggest 3words addresses based on given parameters;
+//! - Retrieve a list of the coordinates of all what3words squares in a given rectangle which is defined by the coordinates of the southwestern and northeastern points;
+//! - Retrieve the available languages and locales.
+
+// #![warn(missing_docs)]
 extern crate reqwest;
 use reqwest::blocking::Response;
 use serde_json::Value;
