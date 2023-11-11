@@ -21,11 +21,11 @@ impl ResponseFormat {
 
 #[derive(Debug)]
 pub struct W3WClient {
-    api_key: String,
-    host: String,
-    language: String,
-    response_format: ResponseFormat,
-    client: reqwest::blocking::Client,
+    pub api_key: String,
+    pub host: String,
+    pub language: String,
+    pub response_format: ResponseFormat,
+    pub client: reqwest::blocking::Client,
 }
 
 impl W3WClient {
@@ -39,39 +39,10 @@ impl W3WClient {
         }
     }
 
-    pub fn api_key(&self) -> &str {
-        &self.api_key
-    }
-
-    pub fn host(&self) -> &str {
-        &self.host
-    }
-
-    pub fn language(&self) -> &str {
-        &self.language
-    }
-
-    pub fn set_api_key(&mut self, api_key: &str) {
-        self.api_key = api_key.to_string();
-    }
-
-    pub fn set_host(&mut self, host: &str) {
-        self.host = host.to_string();
-    }
-
-    pub fn set_language(&mut self, language: &str) {
-        self.language = language.to_string();
-    }
-
-    pub fn set_response_format(&mut self, response_format: ResponseFormat) {
-        self.response_format = response_format;
-    }
-
-    fn check_status_code(response: Response) -> Result<Response, Response> {
-        let status_code = response.status();
-        if status_code.is_client_error() || status_code.is_server_error() {
-            return Err(response);
-        }
+    fn get_request(&self, url: String) -> Result<Response, Response> {
+        let resp = self.client.get(url).send();
+        let mut response = resp.unwrap();
+        response = check_status_code(response)?;
         Ok(response)
     }
 
@@ -91,7 +62,7 @@ impl W3WClient {
 
     pub fn convert_to_3wa_json(&self, latitude: &str, longitude: &str) -> Result<Value, Response> {
         let resp = self.convert_to_3wa(latitude, longitude);
-        let json = W3WClient::get_json(resp)?;
+        let json = get_json(resp)?;
         Ok(json)
     }
 
@@ -101,7 +72,7 @@ impl W3WClient {
         longitude: &str,
     ) -> Result<String, Response> {
         let resp = self.convert_to_3wa(latitude, longitude);
-        let json = W3WClient::get_json(resp)?;
+        let json = get_json(resp)?;
         let result = json["words"].to_string();
         Ok(result)
     }
@@ -117,7 +88,7 @@ impl W3WClient {
 
     pub fn convert_to_coordinates_json(&self, three_words: &str) -> Result<Value, Response> {
         let resp = self.convert_to_coordinates(three_words);
-        let json = W3WClient::get_json(resp)?;
+        let json = get_json(resp)?;
         Ok(json)
     }
 
@@ -141,31 +112,41 @@ impl W3WClient {
 
     pub fn available_languages_json(&self) -> Result<Value, Response> {
         let resp = self.available_languages();
-        let json = W3WClient::get_json(resp)?;
+        let json = get_json(resp)?;
         Ok(json)
     }
 
     pub fn available_languages(&self) -> Result<Response, Response> {
-        let url = format!(
-            "https://api.what3words.com/v3/available-languages?key={}",
-            self.api_key
-        );
+        let url = format!("{}/available-languages?key={}", self.host, self.api_key);
         let resp = self.get_request(url);
         resp
     }
 
-    fn get_json(resp: Result<Response, Response>) -> Result<Value, Response> {
-        let json = match resp {
-            Ok(response) => response.json().unwrap(),
-            Err(response) => return Err(response),
-        };
-        Ok(json)
+    pub fn autosuggest(&self, input: &str) -> Result<Response, Response> {
+        let url = format!(
+            "{}/autosuggest?input={}&key={}",
+            self.host, input, self.api_key
+        );
+        let resp = self.get_request(url)?;
+        Ok(resp)
     }
 
-    fn get_request(&self, url: String) -> Result<Response, Response> {
-        let resp = self.client.get(url).send();
-        let mut response = resp.unwrap();
-        response = W3WClient::check_status_code(response)?;
-        Ok(response)
+    pub fn autosuggest_json(&self, input: &str) -> Result<Value, Response> {
+        let resp = self.autosuggest(input);
+        let json = get_json(resp)?;
+        Ok(json)
     }
+}
+
+fn get_json(resp: Result<Response, Response>) -> Result<Value, Response> {
+    let json: Value = resp?.json().unwrap();
+    Ok(json)
+}
+
+fn check_status_code(response: Response) -> Result<Response, Response> {
+    let status_code = response.status();
+    if status_code.is_client_error() || status_code.is_server_error() {
+        return Err(response);
+    }
+    Ok(response)
 }
