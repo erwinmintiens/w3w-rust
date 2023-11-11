@@ -88,7 +88,6 @@ impl W3WClient {
         if let Some(locale) = locale {
             url.push_str(&format!("&locale={}", locale));
         }
-        println!("URL: {}", url);
         let resp = self.get_request(url)?;
         Ok(resp)
     }
