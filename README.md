@@ -70,7 +70,27 @@ fn main {
 }
 ```
 
-This function only fetches the JSON body of the response. This JSON body is of type `serde_json::Value`.
+This function only fetches the JSON body of the response. This JSON body is of type `serde_json::Value`, so the result of this call is `Result<Value, Response>`.
+
+#### Fetch string
+
+Only the 3word address can be fetched as well:
+
+```rust
+use what3words::{Coordinates, W3WClient};
+
+fn main {
+    let w3_client = W3WClient::new("<your API key>");
+    let coordinates = Coordinates {
+        latitude: 50.830005,
+        longitude: 4.329982,
+    };
+    let resp = w3_client.convert_to_3wa_string(&coordinates, Some("en") , Some("json"), None);
+}
+```
+
+Which will result in a `Result<String, Response>`.
+
 
 ### Convert what3word address to coordinates
 
@@ -102,7 +122,7 @@ fn main {
 }
 ```
 
-This way we can fetch the response body JSON.
+This way we can fetch the response body JSON, so the returned object is of type `Result<Value, Respones>`.
 
 #### Fetch floats
 
@@ -118,4 +138,4 @@ fn main {
 }
 ```
 
-Which will give us the the latitude and longitude in `f64`.
+Which will give us the the latitude and longitude in `f64`: `Result<(f64, f64), Response>`
