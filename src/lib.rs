@@ -12,7 +12,7 @@ pub struct Coordinates {
 
 impl Coordinates {
     fn to_string(&self) -> String {
-        format!("{},{}", self.longitude, self.latitude)
+        format!("{},{}", self.latitude, self.longitude)
     }
 }
 
@@ -24,7 +24,7 @@ pub struct Circle {
 
 impl Circle {
     fn to_string(&self) -> String {
-        format!("{},{},{}", self.longitude, self.latitude, self.radius)
+        format!("{},{},{}", self.latitude, self.longitude, self.radius)
     }
 }
 
@@ -88,6 +88,7 @@ impl W3WClient {
         if let Some(locale) = locale {
             url.push_str(&format!("&locale={}", locale));
         }
+        println!("URL: {}", url);
         let resp = self.get_request(url)?;
         Ok(resp)
     }
