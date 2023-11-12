@@ -3,6 +3,7 @@
 //! `<latitude>,<longitude>`.
 
 /// Represents geographical coordinates with latitude and longitude.
+#[derive(Debug)]
 pub struct Coordinate {
     /// The latitude value
     pub latitude: f64,

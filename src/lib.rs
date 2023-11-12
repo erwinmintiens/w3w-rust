@@ -39,7 +39,7 @@ pub struct W3WClient {
     /// Your W3W API key
     pub api_key: String,
     /// The W3W host which defaults to the what3words API endpoint. This is changeable should you
-    /// run a W3W endpoint locally
+    /// run a W3W endpoint locally.
     pub host: String,
     /// The API client
     pub client: reqwest::blocking::Client,

@@ -5,14 +5,15 @@ use crate::coordinate::Coordinate;
 
 /// A circle constructed of a centerpoint which is a coordinate and a radius in
 /// kilometers.
-pub struct Circle {
+#[derive(Debug)]
+pub struct Circle<'a> {
     /// The coordinates of the centerpoint
-    pub centerpoint: Coordinate,
+    pub centerpoint: &'a Coordinate,
     /// The radius in kilometers
     pub radius: f64,
 }
 
-impl Circle {
+impl Circle<'_> {
     pub fn to_string(&self) -> String {
         format!("{},{}", self.centerpoint.to_string(), self.radius)
     }

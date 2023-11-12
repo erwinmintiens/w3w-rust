@@ -41,12 +41,13 @@ impl Default for ConvertToCoordinatesOptions<'_> {
     }
 }
 
+#[derive(Debug)]
 pub struct AutoSuggestOptions<'a> {
     pub focus_coordinates: Option<&'a Coordinate>,
-    pub circle: Option<&'a Circle>,
+    pub circle: Option<&'a Circle<'a>>,
     pub countries: Option<&'a Vec<&'a str>>,
-    pub bounding_box: Option<&'a BoundingBox>,
-    pub polygon: Option<&'a Polygon>,
+    pub bounding_box: Option<&'a BoundingBox<'a>>,
+    pub polygon: Option<&'a Polygon<'a>>,
     pub language: Option<&'a str>,
     pub prefer_land: Option<bool>,
     pub locale: Option<&'a str>,
@@ -67,6 +68,7 @@ impl Default for AutoSuggestOptions<'_> {
     }
 }
 
+#[derive(Debug)]
 pub struct GridSectionOptions<'a> {
     pub format: Option<&'a str>,
 }

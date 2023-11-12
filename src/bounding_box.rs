@@ -5,14 +5,15 @@ use crate::coordinate::Coordinate;
 
 /// A rectangle which is defined by the coordinate of the southwestern point and the coordinate
 /// of the northeastern point.
-pub struct BoundingBox {
+#[derive(Debug)]
+pub struct BoundingBox<'a> {
     /// Coordinates of the southwestern point
-    pub south_west: Coordinate,
+    pub south_west: &'a Coordinate,
     /// Coordinates of the northeastern point
-    pub north_east: Coordinate,
+    pub north_east: &'a Coordinate,
 }
 
-impl BoundingBox {
+impl BoundingBox<'_> {
     /// Return the BoundingBox as a String in the form
     /// `"<south_west.latitude>,<south_west.longitude>,<north_east.latitude>,<north_east.longitude>"`
     pub fn to_string(&self) -> String {
