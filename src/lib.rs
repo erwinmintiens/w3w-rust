@@ -444,6 +444,26 @@ impl W3WClient {
         Ok(json)
     }
 
+    /// Retrieve a list of the coordinates of all what3words squares in a given rectangle
+    /// which is defined by the coordinates of the southwestern and norteastern points.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let coordinate_sw = Coordinate {
+    ///     latitude: -4.0,
+    ///     longitude: 178.2
+    /// };
+    /// let coordinate_ne = Coordinate {
+    ///     latitude: 22.0,
+    ///     longitude: 195.4
+    /// };
+    /// let bounding_box = BoundingBox {
+    ///     south_west: coordinate_sw,
+    ///     north_east: coordinate_ne
+    /// };
+    /// let resp = w3_client.grid_section(&bounding_box, GridSectionOptions::default());
+    /// ```
     pub fn grid_section(
         &self,
         bounding_box: &BoundingBox,
@@ -462,6 +482,25 @@ impl W3WClient {
         Ok(resp)
     }
 
+    /// Fetch the JSON body of the `grid_section` call.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let coordinate_sw = Coordinate {
+    ///     latitude: -4.0,
+    ///     longitude: 178.2
+    /// };
+    /// let coordinate_ne = Coordinate {
+    ///     latitude: 22.0,
+    ///     longitude: 195.4
+    /// };
+    /// let bounding_box = BoundingBox {
+    ///     south_west: coordinate_sw,
+    ///     north_east: coordinate_ne
+    /// };
+    /// let resp_json = w3_client.grid_section_json(&bounding_box, GridSectionOptions::default());
+    /// ```
     pub fn grid_section_json(
         &self,
         bounding_box: &BoundingBox,
