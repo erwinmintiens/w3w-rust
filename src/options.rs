@@ -44,7 +44,7 @@ impl Default for ConvertToCoordinatesOptions<'_> {
 pub struct AutoSuggestOptions<'a> {
     pub focus_coordinates: Option<&'a Coordinate>,
     pub circle: Option<&'a Circle>,
-    pub country: Option<&'a str>,
+    pub countries: Option<&'a Vec<&'a str>>,
     pub bounding_box: Option<&'a BoundingBox>,
     pub polygon: Option<&'a Polygon>,
     pub language: Option<&'a str>,
@@ -57,7 +57,7 @@ impl Default for AutoSuggestOptions<'_> {
         AutoSuggestOptions {
             focus_coordinates: None,
             circle: None,
-            country: None,
+            countries: None,
             bounding_box: None,
             polygon: None,
             language: None,

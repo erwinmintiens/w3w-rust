@@ -48,10 +48,10 @@ pub struct W3WClient {
 impl W3WClient {
     /// Creates a new instance of the What3Words client with the provided API key.
     ///
-    /// # Examples
+    /// # Example
     ///
     /// ```
-    /// let client = W3WClient::new("your_api_key");
+    /// let w3_client = W3WClient::new("your_api_key");
     /// ```
     pub fn new(api_key: &str) -> Self {
         Self {
@@ -69,10 +69,21 @@ impl W3WClient {
         Ok(response)
     }
 
+    /// Converts a coordinate to a 3word address.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let coordinate = Coordinate {
+    ///     latitude: 50.01,
+    ///     longitude: 4.53234
+    /// }
+    /// let resp = w3_client.convert_to_3wa(&coordinate, &ConvertTo3WAOptions::default());
+    /// ```
     pub fn convert_to_3wa(
         &self,
         coordinates: &Coordinate,
-        options: ConvertTo3WAOptions,
+        options: &ConvertTo3WAOptions,
     ) -> Result<Response, Response> {
         let mut url = format!(
             "{}/convert-to-3wa?key={}&coordinates={}",
@@ -93,30 +104,72 @@ impl W3WClient {
         Ok(resp)
     }
 
+    /// Converts a coordinate to a 3word address and returns the JSON body.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let coordinate = Coordinate {
+    ///     latitude: 50.0012,
+    ///     longitude: -3.23
+    /// }
+    /// let resp_json = w3_client.convert_to_3wa_json(&coordinate, &ConvertTo3WAOptions::default());
+    /// ```
+    ///
+    /// Different options can be added to the call:
+    ///
+    /// ```
+    /// let options = ConvertTo3WAOptions {
+    ///     language: Some("nl"),
+    ///     ..Default::default()
+    /// }
+    /// let resp_json = w3_client.convert_to_3wa_json(&coordinate, &options);
+    /// ```
     pub fn convert_to_3wa_json(
         &self,
         coordinates: &Coordinate,
-        options: ConvertTo3WAOptions,
+        options: &ConvertTo3WAOptions,
     ) -> Result<Value, Response> {
         let resp = self.convert_to_3wa(coordinates, options);
         let json = get_json(resp)?;
         Ok(json)
     }
 
+    /// Convert a coordinate to a 3word address and return the string.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let coordinate = Coordinate {
+    ///     latitude: 50.0012,
+    ///     longitude: -3.23
+    /// }
+    /// let resp_string = w3_client.convert_to_3wa_string(&coordinate,
+    /// ConvertTo3WAOptions::default());
+    /// ```
     pub fn convert_to_3wa_string(
         &self,
         coordinates: &Coordinate,
-        options: ConvertTo3WAOptions,
+        options: &ConvertTo3WAOptions,
     ) -> Result<String, Response> {
         let json = self.convert_to_3wa_json(coordinates, options)?;
         let result = json["words"].to_string();
         Ok(result)
     }
 
+    /// Convert a 3word address to a coordinate.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let three_word_address = "fight.offer.airbag";
+    /// let resp = w3_client.convert_to_coordinates(three_word_address,
+    /// ConvertToCoordinatesOptions::default());
+    /// ```
     pub fn convert_to_coordinates(
         &self,
         three_words: &str,
-        options: ConvertToCoordinatesOptions,
+        options: &ConvertToCoordinatesOptions,
     ) -> Result<Response, Response> {
         let mut url = format!(
             "{}/convert-to-coordinates?words={}&key={}",
@@ -132,21 +185,42 @@ impl W3WClient {
         Ok(resp)
     }
 
+    /// Convert a 3word address to a coordinate and fetch the JSON body from the response.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let three_word_address = "fight.offer.airbag";
+    /// let options = ConvertToCoordinatesOptions {
+    ///     format: Some("geojson"),
+    ///     ..Default::default()
+    /// }
+    /// let resp_json = w3_client.convert_to_coordinates_json(three_word_address, &options)?;
+    /// ```
     pub fn convert_to_coordinates_json(
         &self,
         three_words: &str,
-        options: ConvertToCoordinatesOptions,
+        options: &ConvertToCoordinatesOptions,
     ) -> Result<Value, Response> {
         let resp = self.convert_to_coordinates(three_words, options);
         let json = get_json(resp)?;
         Ok(json)
     }
 
-    pub fn convert_to_coordinates_floats(
+    /// Convert a 3word address to a coordinate and fetch the latitude and longitude.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let three_word_address = "fight.offer.airbag";
+    /// let resp_coordinate = w3_client.convert_to_coordinates_and_get_coordinate(three_word_address,
+    /// ConvertToCoordinatesOptions::default());
+    /// ```
+    pub fn convert_to_coordinates_and_get_coordinate(
         &self,
         three_words: &str,
-        options: ConvertToCoordinatesOptions,
-    ) -> Result<(f64, f64), Response> {
+        options: &ConvertToCoordinatesOptions,
+    ) -> Result<Coordinate, Response> {
         let three_words_json: Value = self.convert_to_coordinates_json(three_words, options)?;
         let latitude: f64 = three_words_json["coordinates"]["lat"]
             .as_f64()
@@ -154,25 +228,164 @@ impl W3WClient {
         let longitude: f64 = three_words_json["coordinates"]["lng"]
             .as_f64()
             .expect("Failed to parse JSON longitude to f64");
-        Ok((latitude, longitude))
+        Ok(Coordinate {
+            latitude,
+            longitude,
+        })
     }
 
-    pub fn available_languages_json(&self) -> Result<Value, Response> {
-        let resp = self.available_languages();
-        let json = get_json(resp)?;
-        Ok(json)
-    }
-
+    /// Get all available languages and locales.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let languages_resp = w3_client.available_languages();
+    /// ```
     pub fn available_languages(&self) -> Result<Response, Response> {
         let url = format!("{}/available-languages?key={}", self.host, self.api_key);
         let resp = self.get_request(url);
         resp
     }
 
+    /// Get all available languages and locales response JSON body.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let languages_resp = w3_client.available_languages_json();
+    /// ```
+    pub fn available_languages_json(&self) -> Result<Value, Response> {
+        let resp = self.available_languages();
+        let json = get_json(resp)?;
+        Ok(json)
+    }
+
+    /// Autosuggest 3word addresses based on provided parameters.
+    ///
+    /// # Examples
+    ///
+    /// ## No extra options
+    ///
+    /// ```
+    /// let incomplete_three_words: &str = "fight.offer.ai";
+    /// let autosuggest_resp = w3_client.autosuggest(incomplete_three_words,
+    /// AutoSuggestOptions::default());
+    /// ```
+    ///
+    /// ## Focus coordinates
+    ///
+    /// Get autosuggstions in order, based on the provided focus point.
+    ///
+    /// ```
+    /// let coordinates = Coordinate{
+    ///     latitude: 51.0,
+    ///     longitude: 4.0
+    /// };
+    /// let options = AutoSuggestOptions {
+    ///     focus_coordinates: coordinates
+    ///     ..Default::default()
+    /// };
+    /// let autosuggest_resp = w3_client.autosuggest(incomplete_three_words, &options);
+    /// ```
+    ///
+    /// ## Circle
+    ///
+    /// Get autosuggestions within a given circle.
+    ///
+    /// ```
+    /// let coordinates = Coordinate{
+    ///     latitude: 51.0,
+    ///     longitude: 4.0
+    /// };
+    /// let circle = Circle {
+    ///     centerpoint: coordinates,
+    ///     radius: 35.0
+    /// };
+    /// let options = AutoSuggestOptions {
+    ///     circle: circle,
+    ///     ..Default::default()
+    /// };
+    /// let autosuggest_resp = w3_client.autosuggest(incomplete_three_words, &options);
+    /// ```
+    ///
+    /// ## Countries
+    ///
+    /// Restricts AutoSuggest to only return results inside the countries specified by
+    /// comma-separated list of uppercase ISO 3166-1 alpha-2 country codes
+    /// (for example, to restrict to Belgium and the UK, use clip-to-country=GB,BE).
+    /// Clip-to-country will also accept lowercase country codes. Entries must be two a-z letters.
+    /// WARNING: If the two-letter code does not correspond to a country, there is no error:
+    /// API simply returns no results.
+    ///
+    /// ```
+    /// let countries = vec!["GB", "BE"];
+    /// let options = AutoSuggestOptions {
+    ///     countries: Some(&countries),
+    ///     ..Default::default()
+    /// };
+    /// let resp = w3_client.autosuggest_json(incomplete_three_words, &options);
+    /// ```
+    ///
+    /// ## BoundingBox
+    ///
+    /// Restrict AutoSuggest results to a bounding box, specified by coordinates.
+    /// Coordinate(south_lat,west_lng),Coordinate(north_lat,east_lng), where:
+    /// south_lat less than or equal to north_latwest_lng less than or equal to east_lng.
+    /// In other words, latitudes and longitudes should be specified order of increasing size.
+    /// Lng is allowed to wrap, so that you can specify bounding boxes which cross
+    /// the ante-meridian: -4,178.2,22,195.4
+    ///
+    /// ```
+    /// let coordinate_sw = Coordinate {
+    ///     latitude: -4.0,
+    ///     longitude: 178.2
+    /// };
+    /// let coordinate_ne = Coordinate {
+    ///     latitude: 22.0,
+    ///     longitude: 195.4
+    /// };
+    /// let bounding_box = BoundingBox {
+    ///     south_west: coordinate_sw,
+    ///     north_east: coordinate_ne
+    /// };
+    /// let options = AutoSuggestOptions {
+    ///     bounding_box: Some(&bounding_box),
+    ///     ..Default::default()
+    /// };
+    /// let resp = w3_client.autosuggest_json(incomplete_three_words, &options);
+    /// ```
+    ///
+    /// ## Polygon
+    ///
+    /// Restrict AutoSuggest results to a polygon, specified by a comma-separated list of lat,lng pairs.
+    /// The API is currently limited to accepting up to 25 pairs.
+    ///
+    /// ```
+    /// let coordinates1 = Coordinate {
+    ///     latitude: 51.521,
+    ///     longitude: -0.343,
+    /// };
+    /// let coordinates2 = Coordinate {
+    ///     latitude: 52.6,
+    ///     longitude: 2.3324,
+    /// };
+    /// let coordinates3 = Coordinate {
+    ///     latitude: 54.234,
+    ///     longitude: 8.343,
+    /// };
+    /// let polygon: Polygon = Polygon {
+    ///     coordinates: vec![coordinates1, coordinates2, coordinates3],
+    /// };
+    /// let options = AutoSuggestOptions {
+    ///     polygon: Some(&polygon),
+    ///     ..Default::default()
+    /// };
+    /// let resp = w3_client.autosuggest_json(incomplete_three_words, &options);
+    /// ```
     pub fn autosuggest(
         &self,
         input: &str,
-        options: AutoSuggestOptions,
+        options: &AutoSuggestOptions,
     ) -> Result<Response, Response> {
         let mut url = format!(
             "{}/autosuggest?key={}&input={}",
@@ -184,8 +397,13 @@ impl W3WClient {
         if let Some(circle) = options.circle {
             url.push_str(&format!("&clip-to-circle={}", circle.to_string()));
         }
-        if let Some(country_value) = options.country {
-            url.push_str(&format!("&clip-to-country={}", country_value));
+        if let Some(country_value) = &options.countries {
+            let mut countries: String = String::new();
+            for country in country_value.iter() {
+                countries.push_str(&format!("{},", &country));
+            }
+            countries.pop();
+            url.push_str(&format!("&clip-to-country={}", countries));
         }
         if let Some(bounding_box) = options.bounding_box {
             url.push_str(&format!(
@@ -205,14 +423,21 @@ impl W3WClient {
         if let Some(locale) = options.locale {
             url.push_str(&format!("&locale={}", locale));
         }
+        println!("{}", url);
         let resp = self.get_request(url)?;
         Ok(resp)
     }
 
+    /// Autosuggest 3word addresses based on provided parameters and fetch the JSON body.
+    /// ```
+    /// let incomplete_three_words: &str = "fight.offer.ai";
+    /// let autosuggest_resp = w3_client.autosuggest_json(incomplete_three_words,
+    /// AutoSuggestOptions::default());
+    /// ```
     pub fn autosuggest_json(
         &self,
         input: &str,
-        options: AutoSuggestOptions,
+        options: &AutoSuggestOptions,
     ) -> Result<Value, Response> {
         let resp = self.autosuggest(input, options);
         let json = get_json(resp)?;
@@ -222,7 +447,7 @@ impl W3WClient {
     pub fn grid_section(
         &self,
         bounding_box: &BoundingBox,
-        options: GridSectionOptions,
+        options: &GridSectionOptions,
     ) -> Result<Response, Response> {
         let mut url = format!(
             "{}/grid-section?bounding-box={}&key={}",
@@ -240,7 +465,7 @@ impl W3WClient {
     pub fn grid_section_json(
         &self,
         bounding_box: &BoundingBox,
-        options: GridSectionOptions,
+        options: &GridSectionOptions,
     ) -> Result<Value, Response> {
         let resp = self.grid_section(bounding_box, options);
         let json = get_json(resp)?;
