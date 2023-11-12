@@ -14,147 +14,24 @@
 //! - Retrieve a list of the coordinates of all what3words squares in a given rectangle which is defined by the coordinates of the southwestern and northeastern points;
 //! - Retrieve the available languages and locales.
 
-// #![warn(missing_docs)]
 extern crate reqwest;
-use std::fmt::format;
 
+mod bounding_box;
+mod circle;
+mod coordinates;
+mod options;
+mod polygon;
+pub use bounding_box::BoundingBox;
+pub use circle::Circle;
+pub use coordinates::Coordinates;
+pub use options::{
+    AutoSuggestOptions, ConvertTo3WAOptions, ConvertToCoordinatesOptions, GridSectionOptions,
+};
+pub use polygon::Polygon;
 use reqwest::blocking::Response;
 use serde_json::Value;
 
 const W3WHOST: &str = "https://api.what3words.com/v3";
-
-/// Represents geographical coordinates with latitude and longitude.
-pub struct Coordinates {
-    /// The latitude value
-    pub latitude: f64,
-    /// The longitude value
-    pub longitude: f64,
-}
-
-impl Coordinates {
-    fn to_string(&self) -> String {
-        format!("{},{}", self.latitude, self.longitude)
-    }
-}
-
-/// A circle constructed of a centerpoint which has a latitude and longitude and a radius in
-/// kilometers.
-pub struct Circle {
-    /// The latitude value of the centerpoint
-    pub latitude: f64,
-    /// The longitude value of the centerpoint
-    pub longitude: f64,
-    /// The radius in kilometers
-    pub radius: f64,
-}
-
-impl Circle {
-    fn to_string(&self) -> String {
-        format!("{},{},{}", self.latitude, self.longitude, self.radius)
-    }
-}
-
-/// A rectangle which is defined by the coordinates of the southwestern point and the coordinates
-/// of the northeastern point.
-pub struct BoundingBox {
-    /// Coordinates of the southwestern point
-    pub south_west: Coordinates,
-    /// Coordinates of the northeastern point
-    pub north_east: Coordinates,
-}
-
-impl BoundingBox {
-    fn to_string(&self) -> String {
-        format!(
-            "{},{}",
-            self.south_west.to_string(),
-            self.north_east.to_string()
-        )
-    }
-}
-
-pub struct Polygon {
-    pub coordinates: Vec<Coordinates>,
-}
-
-impl Polygon {
-    pub fn to_string(&self) -> String {
-        let mut url: String = String::new();
-        for item in self.coordinates.iter() {
-            url.push_str(&format!("{},", &item.to_string()));
-        }
-        url.push_str(&self.coordinates[0].to_string());
-        url
-    }
-}
-
-#[derive(Debug)]
-pub struct ConvertTo3WAOptions<'a> {
-    pub language: Option<&'a str>,
-    pub format: Option<&'a str>,
-    pub locale: Option<&'a str>,
-}
-
-impl Default for ConvertTo3WAOptions<'_> {
-    fn default() -> Self {
-        ConvertTo3WAOptions {
-            language: None,
-            format: None,
-            locale: None,
-        }
-    }
-}
-
-#[derive(Debug)]
-pub struct ConvertToCoordinatesOptions<'a> {
-    pub format: Option<&'a str>,
-    pub locale: Option<&'a str>,
-}
-
-impl Default for ConvertToCoordinatesOptions<'_> {
-    fn default() -> Self {
-        ConvertToCoordinatesOptions {
-            format: None,
-            locale: None,
-        }
-    }
-}
-
-pub struct AutoSuggestOptions<'a> {
-    pub focus_coordinates: Option<&'a Coordinates>,
-    pub circle: Option<&'a Circle>,
-    pub country: Option<&'a str>,
-    pub bounding_box: Option<&'a BoundingBox>,
-    pub polygon: Option<&'a Polygon>,
-    pub language: Option<&'a str>,
-    pub prefer_land: Option<bool>,
-    pub locale: Option<&'a str>,
-}
-
-impl Default for AutoSuggestOptions<'_> {
-    fn default() -> Self {
-        AutoSuggestOptions {
-            focus_coordinates: None,
-            circle: None,
-            country: None,
-            bounding_box: None,
-            polygon: None,
-            language: None,
-            prefer_land: None,
-            locale: None,
-        }
-    }
-}
-
-pub struct GridSectionOptions<'a> {
-    pub format: Option<&'a str>,
-}
-
-impl Default for GridSectionOptions<'_> {
-    fn default() -> Self {
-        GridSectionOptions { format: None }
-    }
-}
 
 /// The main client for interacting with the What3Words API.
 #[derive(Debug)]
