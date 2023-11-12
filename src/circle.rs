@@ -3,7 +3,7 @@ use crate::coordinates::Coordinates;
 /// kilometers.
 pub struct Circle {
     /// The coordinates of the centerpoint
-    centerpoint: Coordinates,
+    pub centerpoint: Coordinates,
     /// The radius in kilometers
     pub radius: f64,
 }
