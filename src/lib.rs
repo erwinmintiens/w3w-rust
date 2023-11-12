@@ -148,19 +148,12 @@ impl W3WClient {
         options: ConvertToCoordinatesOptions,
     ) -> Result<(f64, f64), Response> {
         let three_words_json: Value = self.convert_to_coordinates_json(three_words, options)?;
-
-        let latitude: f64 = match three_words_json["coordinates"]["lat"].as_f64() {
-            Some(value) => value,
-            None => {
-                panic!("Error: latitude is not an f64");
-            }
-        };
-        let longitude: f64 = match three_words_json["coordinates"]["lng"].as_f64() {
-            Some(value) => value,
-            None => {
-                panic!("Error: longitude is not an f64");
-            }
-        };
+        let latitude: f64 = three_words_json["coordinates"]["lat"]
+            .as_f64()
+            .expect("Failed to parse JSON latitude to f64");
+        let longitude: f64 = three_words_json["coordinates"]["lng"]
+            .as_f64()
+            .expect("Failed to parse JSON longitude to f64");
         Ok((latitude, longitude))
     }
 
@@ -255,14 +248,23 @@ impl W3WClient {
     }
 }
 
+/// Fetch the JSON body from a Response.
 fn get_json(resp: Result<Response, Response>) -> Result<Value, Response> {
-    let json: Value = resp?.json().unwrap();
+    let json: Value = resp?
+        .json()
+        .expect("An error occurred while extracting JSON from response");
     Ok(json)
 }
 
+/// Check the status code of a response.
+/// If the status code is between 400 and 599, a error will be printed to io::stderr
 fn check_status_code(response: Response) -> Result<Response, Response> {
     let status_code = response.status();
     if status_code.is_client_error() || status_code.is_server_error() {
+        eprintln!(
+            "The response returned an error, status code: {}",
+            status_code
+        );
         return Err(response);
     }
     Ok(response)

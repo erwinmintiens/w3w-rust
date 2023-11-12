@@ -1,3 +1,5 @@
+//! Here are all `Options` structs defined which can be used to pass to what3words endpoints.
+
 use crate::bounding_box::BoundingBox;
 use crate::circle::Circle;
 use crate::coordinate::Coordinate;

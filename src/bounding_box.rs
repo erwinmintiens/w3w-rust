@@ -1,4 +1,5 @@
-//! A `BoundingBox` is a struct which can be used to pass as an option to certain what3words calls.
+//! A `BoundingBox` is a rectangle defined by 2 coordinates: the southwestern and northeastern coordinates.
+//! This BoundingBox can be used to pass as an option to certain what3words calls.
 
 use crate::coordinate::Coordinate;
 

@@ -1,3 +1,6 @@
+//! A Polygon is a figure defined by multiple coordinates and can be used in certain what3words API
+//! calls.
+
 use crate::coordinate::Coordinate;
 
 /// A polygon defined by at least 3 coordinates. The what3words API only supports up to 25
