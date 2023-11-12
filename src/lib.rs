@@ -18,12 +18,12 @@ extern crate reqwest;
 
 mod bounding_box;
 mod circle;
-mod coordinates;
+mod coordinate;
 mod options;
 mod polygon;
 pub use bounding_box::BoundingBox;
 pub use circle::Circle;
-pub use coordinates::Coordinates;
+pub use coordinate::Coordinate;
 pub use options::{
     AutoSuggestOptions, ConvertTo3WAOptions, ConvertToCoordinatesOptions, GridSectionOptions,
 };
@@ -71,7 +71,7 @@ impl W3WClient {
 
     pub fn convert_to_3wa(
         &self,
-        coordinates: &Coordinates,
+        coordinates: &Coordinate,
         options: ConvertTo3WAOptions,
     ) -> Result<Response, Response> {
         let mut url = format!(
@@ -95,7 +95,7 @@ impl W3WClient {
 
     pub fn convert_to_3wa_json(
         &self,
-        coordinates: &Coordinates,
+        coordinates: &Coordinate,
         options: ConvertTo3WAOptions,
     ) -> Result<Value, Response> {
         let resp = self.convert_to_3wa(coordinates, options);
@@ -105,7 +105,7 @@ impl W3WClient {
 
     pub fn convert_to_3wa_string(
         &self,
-        coordinates: &Coordinates,
+        coordinates: &Coordinate,
         options: ConvertTo3WAOptions,
     ) -> Result<String, Response> {
         let json = self.convert_to_3wa_json(coordinates, options)?;

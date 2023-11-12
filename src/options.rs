@@ -1,7 +1,16 @@
+use crate::bounding_box::BoundingBox;
+use crate::circle::Circle;
+use crate::coordinate::Coordinate;
+use crate::polygon::Polygon;
+
+/// The optional parameters for the `convert_to_3wa` calls.
 #[derive(Debug)]
 pub struct ConvertTo3WAOptions<'a> {
+    /// language of the returned 3 words
     pub language: Option<&'a str>,
+    /// format of the returned payload. Either `"json"` or `"geojson"`
     pub format: Option<&'a str>,
+    /// locale to specify a variant of a language
     pub locale: Option<&'a str>,
 }
 
@@ -31,7 +40,7 @@ impl Default for ConvertToCoordinatesOptions<'_> {
 }
 
 pub struct AutoSuggestOptions<'a> {
-    pub focus_coordinates: Option<&'a Coordinates>,
+    pub focus_coordinates: Option<&'a Coordinate>,
     pub circle: Option<&'a Circle>,
     pub country: Option<&'a str>,
     pub bounding_box: Option<&'a BoundingBox>,

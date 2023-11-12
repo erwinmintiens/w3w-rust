@@ -1,9 +1,13 @@
-use crate::coordinates::Coordinates;
-/// A circle constructed of a centerpoint which has a latitude and longitude and a radius in
+//! The `Circle` can be used to define a circle which can be used in some What3Words API calls.
+//! A circle consist of a centerpoint coordinate and a radius in kilometers.
+
+use crate::coordinate::Coordinate;
+
+/// A circle constructed of a centerpoint which is a coordinate and a radius in
 /// kilometers.
 pub struct Circle {
     /// The coordinates of the centerpoint
-    pub centerpoint: Coordinates,
+    pub centerpoint: Coordinate,
     /// The radius in kilometers
     pub radius: f64,
 }
