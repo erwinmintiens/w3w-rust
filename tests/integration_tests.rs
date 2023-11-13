@@ -1,4 +1,4 @@
-use what3words::{BoundingBox, Circle, Coordinate, Polygon};
+use what3words::{BoundingBox, Circle, Coordinate, Polygon, W3WClient};
 
 const COORDINATE1: Coordinate = Coordinate {
     latitude: 50.12345,
@@ -114,4 +114,11 @@ fn test_polygon_to_string() {
             COORDINATE4.to_string()
         )
     );
+}
+
+#[test]
+fn test_parsing_url() {
+    let w3_client = W3WClient::new("mock-api-key");
+
+    let url = format!("{}/endpoint?key={}", w3_client.host, w3_client.api_key);
 }

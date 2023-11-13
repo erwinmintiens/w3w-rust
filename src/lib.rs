@@ -535,3 +535,31 @@ fn parse_url(mut url: String, keyword: &str, value: &str) -> String {
     url.push_str(&format!("&{}={}", keyword, value));
     url
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::{parse_url, AutoSuggestOptions, W3WClient};
+
+    #[test]
+    fn test_parsing_url() {
+        let mut w3_client = W3WClient::new("mock-api-key");
+        w3_client.host = String::from("https://test.com");
+        let options = AutoSuggestOptions {
+            language: Some("nl"),
+            prefer_land: Some(false),
+            ..Default::default()
+        };
+
+        let mut url = format!("{}/endpoint?key={}", w3_client.host, w3_client.api_key);
+        if let Some(language) = options.language {
+            url = parse_url(url, "language", language);
+        }
+        if let Some(prefer_land) = options.prefer_land {
+            url = parse_url(url, "prefer-land", &format!("{}", prefer_land));
+        }
+        assert_eq!(
+            url.to_string(),
+            "https://test.com/endpoint?key=mock-api-key&language=nl&prefer-land=false"
+        );
+    }
+}
