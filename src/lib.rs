@@ -92,13 +92,13 @@ impl W3WClient {
             coordinates.to_string(),
         );
         if let Some(language) = options.language {
-            url.push_str(&format!("&language={}", language));
+            url = parse_url(url, "language", language);
         }
         if let Some(format) = options.format {
-            url.push_str(&format!("&format={}", format));
+            url = parse_url(url, "format", format);
         }
         if let Some(locale) = options.locale {
-            url.push_str(&format!("&locale={}", locale));
+            url = parse_url(url, "locale", locale);
         }
         let resp = self.get_request(url)?;
         Ok(resp)
@@ -176,10 +176,10 @@ impl W3WClient {
             self.host, three_words, self.api_key
         );
         if let Some(format) = options.format {
-            url.push_str(&format!("&format={}", format));
+            url = parse_url(url, "format", format);
         }
         if let Some(locale) = options.locale {
-            url.push_str(&format!("&locale={}", locale));
+            url = parse_url(url, "locale", locale);
         }
         let resp = self.get_request(url)?;
         Ok(resp)
@@ -392,10 +392,10 @@ impl W3WClient {
             self.host, self.api_key, input
         );
         if let Some(focus_coordinates) = options.focus_coordinates {
-            url.push_str(&format!("&focus={}", focus_coordinates.to_string()));
+            url = parse_url(url, "focus", &focus_coordinates.to_string());
         }
         if let Some(circle) = options.circle {
-            url.push_str(&format!("&clip-to-circle={}", circle.to_string()));
+            url = parse_url(url, "clip-to-circle", &circle.to_string());
         }
         if let Some(country_value) = &options.countries {
             let mut countries: String = String::new();
@@ -403,27 +403,23 @@ impl W3WClient {
                 countries.push_str(&format!("{},", &country));
             }
             countries.pop();
-            url.push_str(&format!("&clip-to-country={}", countries));
+            url = parse_url(url, "clip-to-country", &countries);
         }
         if let Some(bounding_box) = options.bounding_box {
-            url.push_str(&format!(
-                "&clip-to-bounding-box={}",
-                bounding_box.to_string()
-            ));
+            url = parse_url(url, "clip-to-bounding-box", &bounding_box.to_string());
         }
         if let Some(polygon) = options.polygon {
-            url.push_str(&format!("&clip-to-polygon={}", polygon.to_string()));
+            url = parse_url(url, "clip-to-polygon", &polygon.to_string());
         }
         if let Some(language) = options.language {
-            url.push_str(&format!("&language={}", language));
+            url = parse_url(url, "language", language);
         }
         if let Some(prefer_land) = options.prefer_land {
-            url.push_str(&format!("&prefer-land={}", prefer_land));
+            url = parse_url(url, "prefer-land", &format!("{}", prefer_land));
         }
         if let Some(locale) = options.locale {
-            url.push_str(&format!("&locale={}", locale));
+            url = parse_url(url, "locale", locale);
         }
-        println!("{}", url);
         let resp = self.get_request(url)?;
         Ok(resp)
     }
@@ -476,7 +472,7 @@ impl W3WClient {
             self.api_key
         );
         if let Some(format) = options.format {
-            url.push_str(&format!("&format={}", format));
+            url = parse_url(url, "format", format);
         }
         let resp = self.get_request(url)?;
         Ok(resp)
@@ -532,4 +528,10 @@ fn check_status_code(response: Response) -> Result<Response, Response> {
         return Err(response);
     }
     Ok(response)
+}
+
+/// Parse the URL based on a given keyword and value.
+fn parse_url(mut url: String, keyword: &str, value: &str) -> String {
+    url.push_str(&format!("&{}={}", keyword, value));
+    url
 }
