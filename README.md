@@ -5,6 +5,8 @@
 This is a Rust client for the What3Words API, allowing you to convert coordinates to three-word addresses and vice versa.
 This client is based on the provided [API documention](https://developer.what3words.com/public-api/docs) on the What3Words website.
 
+This crate can be found [on crates.io](https://crates.io/crates/what3words) as the crate `what3words`.
+
 ## Features
 
 The following endpoints have been implemented:
