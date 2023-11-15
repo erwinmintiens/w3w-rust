@@ -269,7 +269,7 @@ impl W3WClient {
     /// ```
     /// let incomplete_three_words: &str = "fight.offer.ai";
     /// let autosuggest_resp = w3_client.autosuggest(incomplete_three_words,
-    /// AutoSuggestOptions::default());
+    /// &AutoSuggestOptions::default());
     /// ```
     ///
     /// ## Focus coordinates

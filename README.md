@@ -47,11 +47,10 @@ fn main {
 }
 ```
 
-This call fetches a what3word address for the coordinates (50.830005, 4.329982). We also give the optional parameter `language` which we set to `Some("en")`, this will return us a 3 word value in the provided language (in our case English, which is de default).
+This call fetches a what3word address for the coordinates (50.830005, 4.329982). We also use the default optional parameters, which are all set to `None`.
 
-The optional `format` parameter can be either `"json"` (default) or `"geojson"`.
 
-The locale is used to specify a variant of a specific language. All supported languages and locales can be fetched with the `W3WClient::available_languages()` call.
+See the [Options](#options) section for more details on the optional parameters.
 
 ### Fetch JSON
 
@@ -106,7 +105,8 @@ fn main {
 }
 ```
 
-Conversion from 3word address to coordinates can be done this way. In the above example we also provide the `format` parameter, but no `locale` parameter.
+Conversion from 3word address to coordinates can be done this way.
+See the [Options](#options) section for more details on the optional parameters.
 
 ### Fetch JSON
 
@@ -144,17 +144,16 @@ Autosuggest 3word addresses based on provided parameters.
 
 ### No extra options
 
-```
+```rust
 let incomplete_three_words: &str = "fight.offer.ai";
-let autosuggest_resp = w3_client.autosuggest(incomplete_three_words,
-AutoSuggestOptions::default());
+let autosuggest_resp = w3_client.autosuggest(incomplete_three_words, &AutoSuggestOptions::default());
 ```
 
 ### Focus coordinates
 
 Get autosuggstions in order, based on the provided focus point.
 
-```
+```rust
 let coordinates = Coordinate{
     latitude: 51.0,
     longitude: 4.0
@@ -170,7 +169,7 @@ let autosuggest_resp = w3_client.autosuggest(incomplete_three_words, &options);
 
 Get autosuggestions within a given circle.
 
-```
+```rust
 let coordinates = Coordinate {
     latitude: 51.0,
     longitude: 4.0
@@ -195,7 +194,7 @@ Clip-to-country will also accept lowercase country codes. Entries must be two a-
 WARNING: If the two-letter code does not correspond to a country, there is no error:
 API simply returns no results.
 
-```
+```rust
 let countries = vec!["GB", "BE"];
 let options = AutoSuggestOptions {
     countries: Some(&countries),
@@ -213,7 +212,7 @@ In other words, latitudes and longitudes should be specified order of increasing
 Lng is allowed to wrap, so that you can specify bounding boxes which cross
 the ante-meridian: -4,178.2,22,195.4
 
-```
+```rust
 let coordinate_sw = Coordinate {
     latitude: -4.0,
     longitude: 178.2
@@ -238,7 +237,7 @@ let resp = w3_client.autosuggest_json(incomplete_three_words, &options);
 Restrict AutoSuggest results to a polygon, specified by a comma-separated list of lat,lng pairs.
 The API is currently limited to accepting up to 25 pairs.
 
-```
+```rust
 let coordinates1 = Coordinate {
     latitude: 51.521,
     longitude: -0.343,
@@ -261,7 +260,7 @@ let options = AutoSuggestOptions {
 let resp = w3_client.autosuggest_json(incomplete_three_words, &options);
 ```
 
-## Options
+## Options {#options}
 
 The optional parameters of most calls can be given through some `Options` structs:
 
@@ -269,6 +268,11 @@ The optional parameters of most calls can be given through some `Options` struct
 - Options for `convert-to-coordinates` calls can be given through the `ConvertToCoordinatesOptions`.
 - Options for `autosuggest` calls can be given through the `AutoSuggestOptions`.
 - Options for `grid_section` calls can be given through the `GridSectionOptions`.
+
+Defaults:
+
+- The `format` parameter defaults in this crate to `None`, which the what3words API will interpret as `"json"`.
+- The `language` parameter defaults in this crate to `None`, which the what3words API will interpret as `"en"`.
 
 ```rust
 use what3words::{AutoSuggestOptions, ConvertTo3WAOptions, ConvertToCoordinatesOptions, Coordinate, GridSectionOptions};
