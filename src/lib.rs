@@ -2,7 +2,7 @@
 //!
 //! ## Description
 //!
-//! This is a Rust client for the What3Words API, allowing you to convert coordinates to three-word addresses and vice versa.
+//! This is a client for the What3Words API, allowing you to convert coordinates to three-word addresses and vice versa.
 //! This client is based on the provided [API documention](https://developer.what3words.com/public-api/docs) on the What3Words website.
 //!
 //! ## Features
@@ -282,7 +282,7 @@ impl W3WClient {
     ///     longitude: 4.0
     /// };
     /// let options = AutoSuggestOptions {
-    ///     focus_coordinates: coordinates
+    ///     focus_coordinates: Some(&coordinates),
     ///     ..Default::default()
     /// };
     /// let autosuggest_resp = w3_client.autosuggest(incomplete_three_words, &options);
@@ -298,11 +298,11 @@ impl W3WClient {
     ///     longitude: 4.0
     /// };
     /// let circle = Circle {
-    ///     centerpoint: coordinates,
+    ///     centerpoint: &coordinates,
     ///     radius: 35.0
     /// };
     /// let options = AutoSuggestOptions {
-    ///     circle: circle,
+    ///     circle: Some(&circle),
     ///     ..Default::default()
     /// };
     /// let autosuggest_resp = w3_client.autosuggest(incomplete_three_words, &options);
@@ -345,8 +345,8 @@ impl W3WClient {
     ///     longitude: 195.4
     /// };
     /// let bounding_box = BoundingBox {
-    ///     south_west: coordinate_sw,
-    ///     north_east: coordinate_ne
+    ///     south_west: &coordinate_sw,
+    ///     north_east: &coordinate_ne
     /// };
     /// let options = AutoSuggestOptions {
     ///     bounding_box: Some(&bounding_box),
@@ -374,7 +374,7 @@ impl W3WClient {
     ///     longitude: 8.343,
     /// };
     /// let polygon: Polygon = Polygon {
-    ///     coordinates: vec![coordinates1, coordinates2, coordinates3],
+    ///     coordinates: vec![&coordinates1, &coordinates2, &coordinates3],
     /// };
     /// let options = AutoSuggestOptions {
     ///     polygon: Some(&polygon),
