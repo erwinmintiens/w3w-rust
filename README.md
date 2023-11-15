@@ -260,7 +260,7 @@ let options = AutoSuggestOptions {
 let resp = w3_client.autosuggest_json(incomplete_three_words, &options);
 ```
 
-## Options {#options}
+## Options
 
 The optional parameters of most calls can be given through some `Options` structs:
 
