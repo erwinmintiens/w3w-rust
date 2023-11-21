@@ -6,7 +6,7 @@ use crate::coordinate::Coordinate;
 use crate::polygon::Polygon;
 
 /// The optional parameters for the `convert_to_3wa` calls.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ConvertTo3WAOptions<'a> {
     /// language of the returned 3 words
     pub language: Option<&'a str>,
@@ -26,7 +26,7 @@ impl Default for ConvertTo3WAOptions<'_> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ConvertToCoordinatesOptions<'a> {
     pub format: Option<&'a str>,
     pub locale: Option<&'a str>,
@@ -41,7 +41,7 @@ impl Default for ConvertToCoordinatesOptions<'_> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AutoSuggestOptions<'a> {
     pub focus_coordinates: Option<&'a Coordinate>,
     pub circle: Option<&'a Circle<'a>>,
@@ -68,7 +68,7 @@ impl Default for AutoSuggestOptions<'_> {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct GridSectionOptions<'a> {
     pub format: Option<&'a str>,
 }

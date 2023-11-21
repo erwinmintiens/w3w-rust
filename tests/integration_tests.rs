@@ -1,4 +1,4 @@
-use what3words::{BoundingBox, Circle, Coordinate, Polygon};
+use what3words::{BoundingBox, Circle, Coordinate, Polygon, Printable};
 
 const COORDINATE1: Coordinate = Coordinate {
     latitude: 50.12345,

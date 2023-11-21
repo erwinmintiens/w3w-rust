@@ -21,6 +21,8 @@ mod circle;
 mod coordinate;
 mod options;
 mod polygon;
+mod traits;
+pub use crate::traits::Printable;
 pub use bounding_box::BoundingBox;
 pub use circle::Circle;
 pub use coordinate::Coordinate;
@@ -34,7 +36,7 @@ use serde_json::Value;
 const W3WHOST: &str = "https://api.what3words.com/v3";
 
 /// The main client for interacting with the What3Words API.
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct W3WClient {
     /// Your W3W API key
     pub api_key: String,
@@ -538,7 +540,7 @@ fn parse_url(mut url: String, keyword: &str, value: &str) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::{parse_url, AutoSuggestOptions, W3WClient};
+    use super::{parse_url, AutoSuggestOptions, W3WClient};
 
     #[test]
     fn test_parsing_url() {
